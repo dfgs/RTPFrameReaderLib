@@ -1,3 +1,4 @@
+using BigEndianReaderLib;
 using RTPFrameReaderLib;
 
 namespace RTPFrameReaderLib.UnitTest
@@ -5,6 +6,45 @@ namespace RTPFrameReaderLib.UnitTest
     [TestClass]
     public class RTPReaderUnitTest
     {
+        [TestMethod]
+        public void ShouldNotReadRTPTooShort()
+        {
+            RTPReader reader;
+
+            reader = new RTPReader();
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(()=> reader.Read(Consts.InvalidValidRTPToShort));
+
+        }
+        [TestMethod]
+        public void SShouldThrowExceptionWhenDataIsNull()
+        {
+            RTPReader reader;
+
+            reader = new RTPReader();
+
+#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
+#pragma warning disable CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
+            Assert.ThrowsException<ArgumentNullException>(() => reader.Read((byte[])null));
+#pragma warning restore CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
+#pragma warning restore CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
+
+        }
+        [TestMethod]
+        public void ShouldThrowExceptionWhenReaderIsNull()
+        {
+            RTPReader reader;
+
+            reader = new RTPReader();
+
+#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
+#pragma warning disable CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
+            Assert.ThrowsException<ArgumentNullException>(() => reader.Read((IBigEndianReader)null));
+#pragma warning restore CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
+#pragma warning restore CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
+
+        }
+
         [TestMethod]
         public void ShouldReadValidRTP1()
         {
@@ -34,6 +74,7 @@ namespace RTPFrameReaderLib.UnitTest
             Assert.AreEqual((uint)0, RTP.ExtensionHeaderLength);
             Assert.AreEqual(0, RTP.ExtensionHeaderPayload.Length);
 
+            Assert.AreEqual(160, RTP.Payload.Length);
         }
 
         [TestMethod]
@@ -65,6 +106,7 @@ namespace RTPFrameReaderLib.UnitTest
             Assert.AreEqual((uint)0, RTP.ExtensionHeaderLength);
             Assert.AreEqual(0, RTP.ExtensionHeaderPayload.Length);
 
+            Assert.AreEqual(160, RTP.Payload.Length);
         }
 
 

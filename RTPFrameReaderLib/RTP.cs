@@ -76,10 +76,17 @@
             set;
         }
 
+        public byte[] Payload
+        {
+            get;
+            set;
+        }
+
         public RTP()
         {
             CSRC= Array.Empty<uint>();
             ExtensionHeaderPayload = Array.Empty<byte>();
+            Payload = Array.Empty<byte>();
         }
     }
 

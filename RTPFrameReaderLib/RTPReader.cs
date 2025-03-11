@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RTPFrameReaderLib
 {
@@ -12,7 +13,7 @@ namespace RTPFrameReaderLib
         public RTP Read(byte[] Data)
         {
             if (Data == null) throw new ArgumentNullException(nameof(Data));
-            if (Data.Length < 4) throw new ArgumentOutOfRangeException(nameof(Data));
+            if (Data.Length < 12) throw new ArgumentOutOfRangeException(nameof(Data));
             return Read(new BigEndianReader(Data));
         }
 
@@ -21,7 +22,9 @@ namespace RTPFrameReaderLib
             RTP rtp;
             byte val;
 
-            rtp=new RTP();
+            if (Reader == null) throw new ArgumentNullException(nameof(Reader));
+
+            rtp = new RTP();
 
             val=Reader.ReadByte();
             rtp.Version =(byte)( (val & 192) >> 6);
@@ -47,6 +50,7 @@ namespace RTPFrameReaderLib
                 rtp.ExtensionHeaderPayload= Reader.ReadBytes((int)((rtp.ExtensionHeaderLength-16)/8));
             }
 
+            rtp.Payload= Reader.ReadBytes(Reader.Length-Reader.Position);
 
             return rtp;
            
