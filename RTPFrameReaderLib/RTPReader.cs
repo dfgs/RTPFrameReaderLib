@@ -31,7 +31,22 @@ namespace RTPFrameReaderLib
 
             val = Reader.ReadByte();
             rtp.Marker = (val & 128) != 0;
-            rtp.PayloadType = (ushort)((val & 127));
+            rtp.PayloadType = (byte)((val & 127));
+
+            rtp.SequenceNumber = Reader.ReadUInt16();
+            rtp.Timestamp = Reader.ReadUInt32();
+            rtp.SSRC = Reader.ReadUInt32();
+
+            rtp.CSRC=new uint[rtp.CSRCCount];
+            for(int i = 0;i<rtp.CSRCCount;i++) rtp.CSRC[i] = Reader.ReadUInt32();
+
+            if (rtp.Extension)
+            {
+                rtp.ExtensionHeaderID= Reader.ReadUInt32();
+                rtp.ExtensionHeaderLength = Reader.ReadUInt32();
+                rtp.ExtensionHeaderPayload= Reader.ReadBytes((int)((rtp.ExtensionHeaderLength-16)/8));
+            }
+
 
             return rtp;
            
